@@ -1,9 +1,11 @@
 {
-  "name": "graphql-faker",
-  "version": "2.0.0-rc.23",
-  "description": "Mock or extend your GraphQL API with faked data. No coding required",
+  "name": "@viazenetti/graphql-faker",
+  "version": "1.0.0",
+  "description": "Mock or extend your GraphQL API with faked data. No coding required. Fork of APIs.guru graphql-faker, adding fakeFunc directive.",
   "main": "dist/index.js",
-  "bin": "dist/index.js",
+  "bin": {
+    "graphql-faker": "dist/index.js"
+  },
   "engines": {
     "node": ">= 8.x"
   },
@@ -22,14 +24,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/APIs-guru/graphql-faker.git"
+    "url": "git+https://github.com/vz-tl/graphql-faker.git"
   },
   "author": "APIs.guru <founders@apis.guru>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/APIs-guru/graphql-faker/issues"
+    "url": "https://github.com/vz-tl/graphql-faker/issues"
   },
-  "homepage": "https://github.com/APIs-guru/graphql-faker#readme",
+  "homepage": "https://github.com/vz-tl/graphql-faker#readme",
   "devDependencies": {
     "@types/body-parser": "1.19.0",
     "@types/classnames": "2.2.10",

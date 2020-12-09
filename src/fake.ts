@@ -1,5 +1,9 @@
 //import * as faker from 'faker';
 const faker = require('faker');
+const cli = require('./cli');
+const utils = require('./utils');
+const path = require('path');
+const fs = require('fs');
 import * as moment from 'moment';
 
 export function getRandomInt(min: number, max: number) {
@@ -126,7 +130,7 @@ const fakeFunctions = {
       }
 
       if (randomize === true) {
-        url += '#' + faker.random.number();
+        url += (url.includes('?') ? '&' : '?') + faker.random.number();
       }
 
       return url;
@@ -214,4 +218,34 @@ export function fakeValue(type, options?, locale?) {
   //faker.setLocale(localeBackup);
   faker.locale = localeBackup;
   return result;
+}
+
+let fakeFuncFile: string;
+let fsWait: NodeJS.Timeout;
+
+cli.parseCLI(({ extendURL, fileName }) => {
+  const jsFileName = (
+    fileName ||
+    (extendURL ? './schema_extension.faker.graphql' : './schema.faker.graphql')
+  ).replace('.graphql', '.functions.config.js');
+
+  if (utils.existsSync(jsFileName)) {
+    fakeFuncFile = path.relative(__dirname, jsFileName.replace('.js', ''));
+    fs.watch(jsFileName, (_, filename) => {
+      if (fsWait) {
+        return;
+      }
+      fsWait = setTimeout(() => {
+        fsWait = null;
+      }, 100);
+      if (filename) {
+        delete require.cache[require.resolve(fakeFuncFile)];
+      }
+    });
+  }
+});
+
+export function fakeFunc(name, info) {
+  const fakeFuncDefinitions = fakeFuncFile ? require(fakeFuncFile) : {};
+  return fakeFuncDefinitions[name] && fakeFuncDefinitions[name](info);
 }
