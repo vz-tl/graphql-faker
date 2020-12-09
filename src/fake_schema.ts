@@ -20,6 +20,7 @@ import {
   getRandomItem,
   stdScalarFakers,
   fakeValue,
+  fakeFunc,
 } from './fake';
 
 type FakeArgs = {
@@ -34,10 +35,14 @@ type ListLengthArgs = {
   min: number;
   max: number;
 };
+type FakeFuncArgs = {
+  name: string;
+};
 type DirectiveArgs = {
   fake?: FakeArgs;
   examples?: ExamplesArgs;
   listLength?: ListLengthArgs;
+  fakeFunc?: FakeFuncArgs;
 };
 
 export const fakeTypeResolver: GraphQLTypeResolver<unknown, unknown> = async (
@@ -102,10 +107,15 @@ export const fakeFieldResolver: GraphQLFieldResolver<unknown, unknown> = async (
     }
 
     if (isListType(type)) {
-      return Array(getListLength(fieldDef))
-        .fill(null)
-        .map(() => fakeValueOfType(type.ofType));
+      return (
+        getFuncOrValueReturn(getFakeFuncCB(fieldDef, info)) ||
+        Array(getListLength(fieldDef))
+          .fill(null)
+          .map(() => fakeValueOfType(type.ofType))
+      );
     }
+
+    const funcCB = getFakeFuncCB(fieldDef, info) || getFakeFuncCB(type, info);
 
     const valueCB =
       getExampleValueCB(fieldDef) ||
@@ -114,10 +124,7 @@ export const fakeFieldResolver: GraphQLFieldResolver<unknown, unknown> = async (
       getFakeValueCB(type);
 
     if (isLeafType(type)) {
-      if (valueCB) {
-        return valueCB();
-      }
-      return fakeLeafValueCB(type);
+      return getFuncOrValueReturn(funcCB, valueCB) || fakeLeafValueCB(type);
     } else {
       // TODO: error on fake directive
       const __typename: string = isAbstractType(type)
@@ -126,7 +133,7 @@ export const fakeFieldResolver: GraphQLFieldResolver<unknown, unknown> = async (
 
       return {
         __typename,
-        ...(valueCB ? valueCB() : {}),
+        ...(getFuncOrValueReturn(funcCB, valueCB) || {}),
       };
     }
   }
@@ -135,6 +142,24 @@ export const fakeFieldResolver: GraphQLFieldResolver<unknown, unknown> = async (
     const fakeDirective = schema.getDirective('fake');
     const args = getDirectiveArgs(fakeDirective, object) as FakeArgs;
     return args && (() => fakeValue(args.type, args.options, args.locale));
+  }
+  function getFakeFuncCB(object, info) {
+    const fakeFuncDirective = schema.getDirective('fakeFunc');
+    const args = getDirectiveArgs(fakeFuncDirective, object) as FakeFuncArgs;
+    return args && (() => fakeFunc(args.name, info));
+  }
+  function getFuncOrValueReturn(fCB, vCB?) {
+    if (fCB) {
+      const fCBVal = fCB();
+      if (fCBVal !== null && fCBVal !== undefined) {
+        return fCBVal;
+      }
+    }
+    if (vCB) {
+      return vCB();
+    }
+
+    return null;
   }
 
   function getExampleValueCB(object) {

@@ -2,18 +2,46 @@
 
 # GraphQL Faker
 
-[![Build Status](https://github.com/APIs-guru/graphql-faker/workflows/CI/badge.svg?branch=master)](https://github.com/APIs-guru/graphql-faker/actions?query=branch%3Amaster)
-[![npm](https://img.shields.io/npm/v/graphql-faker.svg)](https://www.npmjs.com/package/graphql-faker)
+[![Build Status](https://github.com/vz-tl/graphql-faker/workflows/CI/badge.svg?branch=master)](https://github.com/vz-tl/graphql-faker/actions?query=branch%3Amaster)
+[![npm](https://img.shields.io/npm/v/@viazenetti/graphql-faker.svg)](https://www.npmjs.com/package/@viazenetti/graphql-faker)
 [![David](https://img.shields.io/david/APIs-guru/graphql-faker.svg)](https://david-dm.org/APIs-guru/graphql-faker)
 [![David](https://img.shields.io/david/dev/APIs-guru/graphql-faker.svg)](https://david-dm.org/APIs-guru/graphql-faker?type=dev)
 [![npm](https://img.shields.io/npm/l/graphql-faker.svg)](https://github.com/APIs-guru/graphql-faker/blob/master/LICENSE)
-[![docker](https://img.shields.io/docker/build/apisguru/graphql-faker.svg)](https://hub.docker.com/r/apisguru/graphql-faker/)
+[![docker](https://img.shields.io/docker/build/apisguru/graphql-faker.svg)](https://hub.docker.com/r/viazenetti/graphql-faker/)
+
+Fork from [Apis-guru graphql-faker](https://github.com/APIs-guru/graphql-faker). All credits to them for this amazing tool!
 
 Mock your future API or extend the existing API with realistic data from [faker.js](https://github.com/Marak/faker.js). **No coding required**.
 All you need is to write [GraphQL SDL](https://alligator.io/graphql/graphql-sdl/). Don't worry, we will provide you with examples in our SDL editor.
 
 In the GIF below we add fields to types inside real GitHub API and you can make queries from GraphiQL, Apollo, Relay, etc. and receive **real data mixed with mock data.**
 ![demo-gif](./docs/demo.gif)
+
+Fork adds support for `@fakeFunc` directive, allowing to invoke a JS function. The return value can be either static or depending on the GraphQL operation.
+
+## How to use `@fakeFunc` directive?
+
+Apply `@fakeFunc` directive to any field or scalar:
+
+```
+type Example {
+  testField: String @fakeFunc(name: "exampleFakeFunc")
+}
+```
+
+The `name` property refers to a JavaScript function defined in a separate .js file which has to have the same name as the SDL file, but ending with `.functions.config.js` instead of `.graphql`,
+like `schema.faker.functions.config.js`. The .js file has to have one default export containing all faker funtions:
+
+```
+module.exports = {
+  exampleFakeFunc(info) {
+    console.log('operation info', info);
+    return null;
+  }
+};
+```
+
+If the function returns `null`/`undefined`, graphql-faker will still apply own fake return values.
 
 ## How does it work?
 

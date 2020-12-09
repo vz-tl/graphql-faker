@@ -11,13 +11,12 @@ import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/hint/show-hint';
 import 'codemirror/addon/lint/lint';
 import 'codemirror/keymap/sublime';
-import 'codemirror/keymap/sublime';
 
-import * as CodeMirror from 'codemirror';
+import CodeMirror from 'codemirror';
 
 import { GraphQLSchema, GraphQLList, GraphQLNonNull } from 'graphql';
-import * as marked from 'marked';
-import * as React from 'react';
+import marked from 'marked';
+import React from 'react';
 
 type GraphQLEditorProps = {
   value: string;

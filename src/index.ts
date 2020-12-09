@@ -153,8 +153,8 @@ function runServer(
     '/voyager.worker.js',
     express.static(
       path.join(
-        __dirname,
-        '../node_modules/graphql-voyager/dist/voyager.worker.js',
+        path.dirname(require.resolve('graphql-voyager')),
+        'voyager.worker.js',
       ),
     ),
   );

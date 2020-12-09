@@ -5,5 +5,5 @@ WORKDIR /workdir
 
 EXPOSE 9002
 
-RUN yarn global add graphql-faker && \
+RUN yarn global add @viazenetti/graphql-faker && \
     yarn cache clean --force
