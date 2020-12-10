@@ -20,12 +20,14 @@ body {
 
 .tab-content {
   overflow: hidden;
-  height: 0;
+  height: 1px;
+  margin-top: -1px;
 }
 
 .tab-content.-active {
   display: block;
   height: 100%;
+  margin-top: 0;
 }
 
 nav > ul {
