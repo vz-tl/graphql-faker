@@ -40,6 +40,7 @@ build/Release
 
 # es5 output dir
 /dist/
+viazenetti-graphql-faker*.tgz
 
 # editor output
 src/editor/main.js
