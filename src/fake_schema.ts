@@ -79,7 +79,7 @@ export const fakeFieldResolver: GraphQLFieldResolver<unknown, unknown> = async (
     resolved = source[info.path.key]; // alias value
   }
 
-  if (resolved === undefined) {
+  if (resolved === undefined || resolved === null) {
     resolved = fakeValueOfType(fieldDef.type);
   }
 
